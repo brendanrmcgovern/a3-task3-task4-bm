@@ -1,0 +1,95 @@
+---
+title: "a3_task3_brendan_mcgovern"
+name: "Brendan McGovern"
+data: "10/31/2020"
+output: html_document
+---
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+library(kableExtra)
+library(lubridate)
+```
+
+#5. Read in the urchins data.
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+sb_urchins <- read_csv(here("data", "urchins.csv")) %>% 
+  clean_names()
+```
+
+##a. Section 1: Size comparison of purple and red urchins
+
+###i. Exploratory vizualizations comparing the distribution of sizes between purple and red urchins using the graph types below. These are exploratory (not final) visualizations so they don’t need to be perfect and you don’t need to add figure captions, but at least update axis labels:
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+sb_urchins %>% 
+  ggplot(aes(x = size)) +
+  geom_histogram() +
+  labs(x = "Sea urchin diameter (cm), measured to the nearest 0.5 cm", y = "sea urchin count") +
+  facet_wrap(~common_name)
+```
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+sb_urchins %>%
+  ggplot(aes(x = common_name, y = size)) +
+  geom_boxplot() +
+  labs(x = "Sea Urchins", y = "Sea urchin diameter (cm)")
+```
+
+###ii. Descriptive statistics table: Create a summary table that contains stastics for purple and red urchins (excluding site): mean, median, standard deviation, and sample size. 
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+sb_urchins_summary <- sb_urchins %>%
+  group_by(common_name) %>% 
+  summarize(mean_size = mean(size),
+            sd_size = sd(size),
+            median_size = median(size),
+            n())
+
+sb_urchins_summary %>% 
+  kbl() %>% 
+  kable_paper("hover")
+```
+
+###iii. From the summary table, we can see that the Purple Urchin popultion is on average smaller than the Red Urchin population. The Purple Urchin population is less dispersed and generally smaller in diamater. The Purple Urchin population has a slight positive skew, smaller standard deviation and a narrower dispersion. The Red Urchin population has a more normal distribution, larger standard deviation and wider dispersion. The urchin population have a mean difference of 2.306692
+
+##b. Section 2: Explore purple urchin counts by site and year
+###i. Create purple_urchins: and then filter to only include for purple urchins, convert the date to class "Date", creat a new column called site_full that contains the full names for the sites
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+purple_urchins <- sb_urchins %>%
+  mutate(date_new = mdy(date)) %>% 
+  mutate(year_new = year(date_new)) %>% 
+  filter(common_name == "Purple Urchin") %>% 
+  mutate(site_full = case_when(
+    site == "NAPL" ~ "Naples Reef",
+    site == "AQUE" ~ "Arroyo Quemado Reef",
+    site == "CARP" ~ "Carpinteria Reef",
+    site == "MOHK" ~ "Mohawk Reef",
+    site == "IVEE" ~ "Isla Vista Reef"))
+```
+
+###ii. Create a summary table containing the total number of purple urchins observed by site and year.
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+purple_urchins_summary <- purple_urchins %>%
+  group_by(site_full, year_new) %>% 
+  count(site_full) %>% 
+  rename(count = n)
+
+purple_urchins_summary %>% 
+  kbl() %>%
+  kable_styling()
+```
+###iii. Make exploratory graph of counts of purple urchins recorded at each site over time for the years included in the study
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+
+purple_urchins_summary %>% 
+  ggplot(aes(x = year_new, y = count)) +
+  geom_col(aes(fill = site_full)) +
+  facet_wrap(~site_full)
+```
+
+###iv. Save and knit .Rmd, then commit and push to Github

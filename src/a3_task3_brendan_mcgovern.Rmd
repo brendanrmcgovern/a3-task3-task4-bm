@@ -1,7 +1,7 @@
 ---
 title: "a3_task3_brendan_mcgovern"
-name: "Brendan McGovern"
-data: "10/31/2020"
+author: "Brendan McGovern"
+date: "10/31/2020"
 output: html_document
 ---
 
@@ -29,7 +29,7 @@ sb_urchins <- read_csv(here("data", "urchins.csv")) %>%
 sb_urchins %>% 
   ggplot(aes(x = size)) +
   geom_histogram() +
-  labs(x = "Sea urchin diameter (cm), measured to the nearest 0.5 cm", y = "sea urchin count") +
+  labs(x = "Sea urchin diameter (cm), measured to the nearest 0.5 cm", y = "Sea urchin count") +
   facet_wrap(~common_name)
 ```
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
@@ -54,10 +54,10 @@ sb_urchins_summary %>%
   kable_paper("hover")
 ```
 
-###iii. From the summary table, we can see that the Purple Urchin popultion is on average smaller than the Red Urchin population. The Purple Urchin population is less dispersed and generally smaller in diamater. The Purple Urchin population has a slight positive skew, smaller standard deviation and a narrower dispersion. The Red Urchin population has a more normal distribution, larger standard deviation and wider dispersion. The urchin population have a mean difference of 2.306692
+###iii. From the summary table, we can see that the Purple Urchin population is on average smaller than the Red Urchin population. The Purple Urchin population is less dispersed and generally smaller in diamater. The Purple Urchin population has a slight positive skew, a smaller standard deviation and a narrower dispersion. The Red Urchin population has a more normal distribution, a larger standard deviation and wider dispersion. The urchin populations have a mean difference of 2.306692cm or a 40.20% difference between population mean sizes.
 
 ##b. Section 2: Explore purple urchin counts by site and year
-###i. Create purple_urchins: and then filter to only include for purple urchins, convert the date to class "Date", creat a new column called site_full that contains the full names for the sites
+###i. Create purple_urchins and then: filter to only include for purple urchins, convert the date to class "Date", create a new column that only contains the year, create a new column called site_full that contains the full names for the sites.
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
 purple_urchins <- sb_urchins %>%
   mutate(date_new = mdy(date)) %>% 
